@@ -13,6 +13,9 @@
       name="keywords"
       content="Tinotenda Mhedziso, porfolio website, PassionOverPain" />
     <meta name="author" content="Tinotenda Mhedziso" />
+    <meta
+      name="google-site-verification"
+      content="d8Uve78HfX_Hn9B7z1HEcAUZTfJtPwbEPWyrcFXI_dI" />
     <link rel="shortcut icon" href="Images/Favicon.png" type="image/x-icon" />
     <!-- Notyf CSS -->
     <link
@@ -23,14 +26,20 @@
     <!-- GSAP CDN link -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.1/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.1/ScrollTrigger.min.js"></script>
+    <!-- Video Js for status videos -->
+    <link
+      href="https://unpkg.com/video.js/dist/video-js.css"
+      rel="stylesheet" />
+    <script src="https://unpkg.com/video.js/dist/video.js"></script>
 
     <title>Tinotenda Mhedziso's portfolio website</title>
   </head>
   <body>
     <div id="preloader">
-      <div id="Loading">Loading....Please be Patient</div>
+      <div class="loader" id="Loading">
+        <div data-glitch="Loading..." class="glitch">Loading...</div>
+      </div>
     </div>
-
     <!-------------------------------------------Header Start----------------------------------------------------------------------------------->
     <header>
       <div class="modalBackground" id="passionModal">
@@ -49,7 +58,7 @@
               <tbody>
                 <tr>
                   <td class="icon-cell">
-                    <img src="Images/Icons/help.svg" alt="The help icon" />
+                    <img src="Images/Icons/inspect.svg" alt="The help icon" />
                   </td>
                   <td class="description-cell">
                     <p>
@@ -447,7 +456,7 @@
             Tinotenda Mhedziso
           </span>
         </h1>
-        <h4>Fullstack | Game | Software Developer</h4>
+        <h4>A Software Developer</h4>
         <div id="checkCon" class="flexBox hidden">
           <p style="color: white">Your current Quests:</p>
           <div id="checklist">
@@ -486,59 +495,133 @@
             </div>
           </button>
         </div>
+        <!-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>.. Music Player <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< -->
+        <div class="music-card" id="musicCard">
+          <div class="music-top">
+            <div class="music-pfp">
+              <div class="music-playing">
+                <div class="music-greenline music-line-1"></div>
+                <div class="music-greenline music-line-2"></div>
+                <div class="music-greenline music-line-3"></div>
+                <div class="music-greenline music-line-4"></div>
+                <div class="music-greenline music-line-5"></div>
+              </div>
+            </div>
+            <div class="music-texts">
+              <p class="title-1" onclick="playMusic()">Music title here</p>
+              <p class="title-2">Music Artist here</p>
+            </div>
+          </div>
+
+          <div class="music-controls">
+            <img
+              src="Images/Icons/volume.svg"
+              alt="Volume"
+              class="music-icon music-volume_button" />
+
+            <div class="music-volume">
+              <div class="slider">
+                <div class="green"></div>
+              </div>
+              <div class="circle"></div>
+            </div>
+
+            <img
+              src="Images/Icons/previous.svg"
+              alt="Previous"
+              class="music-icon" />
+
+            <img src="Images/Icons/play.svg" alt="Play" class="music-icon" />
+
+            <img src="Images/Icons/next.svg" alt="Next" class="music-icon" />
+
+            <div class="music-air"></div>
+
+            <img
+              src="Images/Icons/visualizer.svg"
+              alt="Toggle Visualizer"
+              class="music-icon visualizer-toggle"
+              onclick="toggleVisualizer()" />
+
+            <img
+              src="Images/Icons/close.svg"
+              alt="Close"
+              class="music-icon"
+              onclick="hideMusicCard()" />
+          </div>
+
+          <div class="music-time">
+            <div class="music-elapsed"></div>
+          </div>
+
+          <p class="music-timetext music-time_now">1:31</p>
+          <p class="music-timetext music-time_full">3:46</p>
+        </div>
+        <button id="musicToggle" class="music-toggle" onclick="showMusicCard()">
+          <img
+            src="Images/Icons/music.svg"
+            alt="Music Toggle"
+            id="musicToggleIcon" />
+        </button>
       </div>
       <nav>
         <ul class="menu">
           <div class="menuToggle" onclick="openNavMenu()">
             <ion-icon name="add-outline" id="menuOpener"></ion-icon>
           </div>
+          <img
+            src="Images/Icons/inspect.svg"
+            id="tooltipToggle"
+            alt="Toggle tooltips" />
+
           <li style="--i: 0">
             <a href="#">
-              <ion-icon name="home-outline" title="Home"></ion-icon>
+              <ion-icon name="home-outline"></ion-icon>
+              <span class="tooltip">Home</span>
             </a>
           </li>
           <li style="--i: 1">
             <a href="#AboutSection">
-              <ion-icon name="person-outline" title="About Me"></ion-icon>
+              <ion-icon name="person-outline"></ion-icon>
+              <span class="tooltip">About Me</span>
             </a>
           </li>
           <li style="--i: 2">
             <a href="#ProjectsSection">
-              <ion-icon name="desktop-outline" title="Projects"></ion-icon>
+              <ion-icon name="desktop-outline"></ion-icon>
+              <span class="tooltip">Projects</span>
             </a>
           </li>
           <li style="--i: 3">
             <a href="#SkillsSection">
-              <ion-icon class="fa-solid fa-award" title="Skills"></ion-icon>
+              <ion-icon class="fa-solid fa-award"></ion-icon>
+              <span class="tooltip">Skills</span>
             </a>
           </li>
           <li style="--i: 4">
             <a id="Anime">
-              <ion-icon
-                name="accessibility-sharp"
-                title="Toggle Animations"></ion-icon>
+              <ion-icon name="accessibility-sharp"></ion-icon>
+              <span class="tooltip">Toggle Animations</span>
             </a>
           </li>
           <li style="--i: 5" onclick="toggleCheckList()">
             <a>
-              <ion-icon
-                class="fa-solid fa-list-check"
-                title="Checklist"></ion-icon>
+              <ion-icon class="fa-solid fa-list-check"></ion-icon>
+              <span class="tooltip">Checklist</span>
             </a>
           </li>
           <li style="--i: 6" onclick="showToS()">
             <a>
-              <ion-icon
-                name="shield-checkmark-sharp"
-                title="My Terms of Service"></ion-icon>
+              <ion-icon name="shield-checkmark-sharp"></ion-icon>
+              <span class="tooltip">My Terms of Service</span>
             </a>
           </li>
           <li style="--i: 7">
             <a>
               <ion-icon
                 name="download-outline"
-                title="Download My CV"
                 onclick="downloadCV()"></ion-icon>
+              <span class="tooltip">Download My CV</span>
             </a>
           </li>
         </ul>
@@ -550,22 +633,10 @@
       <section class="AboutMe" id="AboutSection">
         <div class="row">
           <div class="AboutC1">
-            <div class="profile-box">
-              <div class="profile-elements bg"></div>
-              <div class="profile-elements imgBx">
-                <img src="Images/Me.webp" alt="My profile picture" />
-              </div>
-              <div class="profile-elements name">
-                <h2>Tinotenda Mhedziso</h2>
-              </div>
-              <div class="profile-elements content">
-                <p>
-                  Time is the gift that robs you of the present. Let me save you
-                  some.
-                </p>
-              </div>
-              <div class="profile-card"></div>
-            </div>
+            <img
+              src="Images/Illustrations/aboutme.svg"
+              alt="Illustration about me"
+              class="illustration" />
           </div>
           <div class="AboutC2">
             <h3 class="subTitle bounce">About Me</h3>
@@ -583,10 +654,10 @@
             </div>
             <div class="Extra">
               <button
-                class="actionBtn ui-btn Viewpoint Activepoint"
+                class="actionBtn ui-btn Activepoint"
                 id="TechStack"
                 onclick="show('Skills')">
-                <span>Tech Stack</span>
+                <span>Tech</span>
               </button>
 
               <button
@@ -731,10 +802,14 @@
                       [2023 ~ 2025]
                     </span>
                   </span>
+                  <br />
                 </li>
                 <ul>
-                  Bachelor's degree in Information Technology Academic
-                  Activites:
+                  <br />
+                  Bachelor's degree in Information Technology
+                  <br />
+                  <br />
+                  Academic Activites:
                   <li>Computer Society Executive</li>
                   <br />
                 </ul>
@@ -743,9 +818,21 @@
             <div class="View" id="Work">
               <ul>
                 <span style="color: #0f0">Society experience</span>
-                <li>Events Coordinator of the NMU Computer Society [2024]</li>
+                <br />
+                <li>
+                  <br />
+                  [March 2024 ~ December 2024]
+                  <br />
+                  Events Coordinator of the NMU Computer Society
+                </li>
+                <br />
                 <span style="color: #0f0">Working experience</span>
-                <li>Oasis Infobyte Junior Web Development Intern [2024]</li>
+                <li>
+                  <br />
+                  [June 2024 ~ July 2024]
+                  <br />
+                  Oasis Infobyte Junior Web Development Intern
+                </li>
                 <br />
               </ul>
             </div>
@@ -755,7 +842,11 @@
       <!------------------------------------------------Projects---------------------------------------------------------------------------------------->
       <section class="Projects" id="ProjectsSection">
         <div class="flexBox">
-          <h2 class="section-title subTitle bounce">My Projects</h2>
+          <h2
+            class="section-title subTitle bounce"
+            onclick="showNotification(`By clicking the ...`,3)">
+            My Projects
+          </h2>
         </div>
         <div class="project-item" id="TheAtlasSix">
           <div class="project-icon">
@@ -770,37 +861,47 @@
               tested, who will stand with you when the truth is revealed?
             </p>
             <p>
+              <strong>Platforms:</strong>
+              Desktop and Laptop
+            </p>
+            <p>
               <strong>Version:</strong>
               In development
             </p>
+
             <div class="project-tags">
               <span class="tag">APIs</span>
               <span class="tag">CSS</span>
               <span class="tag">Firebase</span>
+              <span class="tag">Game</span>
               <span class="tag">HTML</span>
               <span class="tag">JavaScript</span>
               <span class="tag">JSON</span>
             </div>
             <div class="project-buttons">
               <button class="ui-btn">
-                <span>Source Code</span>
+                <span>Hidden</span>
               </button>
 
               <button class="ui-btn">
-                <span>Live Site</span>
+                <span>Hidden</span>
+              </button>
+
+              <button class="ui-btn">
+                <span>Hidden</span>
               </button>
             </div>
           </div>
           <div class="project-preview">
             <img
               src="Images/Previews/The Atlas Six.png"
-              alt="Project 1 Preview" />
+              alt="The Atlas Six Preview" />
           </div>
         </div>
 
         <div class="project-item" id="Passion">
           <div class="project-icon">
-            <img src="Images/Icons/ai.svg" alt="Project 2 Icon" />
+            <img src="Images/Icons/ai.svg" alt="Passion Icon" />
           </div>
           <div class="project-details">
             <h2>Passion</h2>
@@ -810,11 +911,17 @@
               relaying information about me in a more fun but effective way.
             </p>
             <p>
+              <strong>Platform:</strong>
+              Desktop, Laptop and Mobile
+            </p>
+            <p>
               <strong>Version:</strong>
               Released - 1.3
             </p>
             <div class="project-tags">
               <span class="tag">APIs</span>
+              <span class="tag">Chatbot</span>
+              <span class="tag">Cloud</span>
               <span class="tag">CSS</span>
               <span class="tag">GPT 4 mini</span>
               <span class="tag">JavaScript</span>
@@ -824,22 +931,26 @@
             </div>
             <div class="project-buttons">
               <button class="ui-btn">
-                <span>Source Code</span>
+                <span>Hidden</span>
               </button>
 
               <button class="ui-btn">
-                <span>Live Site</span>
+                <span>Hidden</span>
+              </button>
+
+              <button class="ui-btn">
+                <span>Hidden</span>
               </button>
             </div>
           </div>
           <div class="project-preview">
-            <img src="Images/Previews/Passion.webp" alt="Project 2 Preview" />
+            <img src="Images/Previews/Passion.webp" alt="Passion Preview" />
           </div>
         </div>
 
         <div class="project-item" id="CreateIT">
           <div class="project-icon">
-            <img src="Images/Icons/createIT.svg" alt="Project 2 Icon" />
+            <img src="Images/Icons/createIT.svg" alt="CreateIT Icon" />
           </div>
           <div class="project-details">
             <h2>CreateIT</h2>
@@ -850,12 +961,17 @@
               to everyday meal planning.
             </p>
             <p>
+              <strong>Platforms:</strong>
+              Desktop and Laptop
+            </p>
+            <p>
               <strong>Version:</strong>
               Prototype
             </p>
             <div class="project-tags">
               <span class="tag">C#</span>
               <span class="tag">CSV</span>
+              <span class="tag">Food App</span>
               <span class="tag">Local-Database</span>
             </div>
             <div class="project-buttons">
@@ -864,7 +980,7 @@
                   <a
                     href="https://github.com/Passion-Over-Pain/CreateIT"
                     target="_blank">
-                    Source Code
+                    Code
                   </a>
                 </span>
               </button>
@@ -872,33 +988,39 @@
               <button class="ui-btn">
                 <span>
                   <a
-                    href="https://github.com/Passion-Over-Pain/CreateIT/releases/download/Initial-Release/CreateIT.zip">
+                    href="https://github.com/Passion-Over-Pain/CreateIT/releases/download/v1.2/CreateIT.zip">
                     Download
                   </a>
                 </span>
               </button>
+
+              <button class="ui-btn">
+                <span onclick="starRepository(`CreateIT`)">Like</span>
+              </button>
             </div>
           </div>
           <div class="project-preview">
-            <img src="Images/Previews/CreateIT.webp" alt="Project 3 Preview" />
+            <img src="Images/Previews/CreateIT.webp" alt="CreateIT Preview" />
           </div>
         </div>
 
         <div class="project-item" id="TaskApp">
           <div class="project-icon">
-            <img src="Images/Icons/checklist.svg" alt="Project 3 Icon" />
+            <img src="Images/Icons/checklist.svg" alt="TaskApp Icon" />
           </div>
           <div class="project-details">
             <h2>Project Management App</h2>
             <p>
-              This project management app uses ASP.NET Core Web APIs with Entity
-              Framework for the backend and SQL Server for data storage. The app
-              provides comprehensive task tracking and employee management
-              features, ensuring secure and efficient project workflow. It
-              supports role-based authentication and authorization, enabling
-              Administrators to manage users, Project Managers to oversee
-              projects and tasks, and Systems Analysts/Web Developers to update
-              task statuses.
+              This project management app utilizes ASP.NET Core Web APIs with
+              Entity Framework and SQL Server for data storage. It offers
+              comprehensive task tracking and employee management features,
+              ensuring secure and efficient project workflows. The application
+              supports role-based authentication and authorization to perform
+              actions.
+            </p>
+            <p>
+              <strong>Platforms:</strong>
+              Desktop and Laptop
             </p>
             <p>
               <strong>Version:</strong>
@@ -909,6 +1031,7 @@
               <span class="tag">C#</span>
               <span class="tag">React</span>
               <span class="tag">SQL Database</span>
+              <span class="tag">Task App</span>
             </div>
             <div class="project-buttons">
               <button class="ui-btn">
@@ -916,24 +1039,102 @@
                   <a
                     href="https://github.com/Passion-Over-Pain/ProjectManagementApp-Assignment"
                     target="_blank">
-                    Source Code
+                    Code
                   </a>
                 </span>
               </button>
 
               <button class="ui-btn">
-                <span>Download</span>
+                <span>Unavailable</span>
+              </button>
+
+              <button class="ui-btn">
+                <span
+                  onclick="starRepository(`ProjectManagementApp-Assignment`)">
+                  Like
+                </span>
               </button>
             </div>
           </div>
           <div class="project-preview">
-            <img src="Images/Previews/ProjectApp.png" alt="Project 4 Preview" />
+            <img src="Images/Previews/ProjectApp.png" alt="TaskApp Preview" />
           </div>
         </div>
 
+        <div class="project-item" id="TemplatePortfolio">
+          <div class="project-icon">
+            <img
+              src="Images/Icons/portfolio.svg"
+              alt="Template Portfolio Icon" />
+          </div>
+          <div class="project-details">
+            <h2>Template Portfolio</h2>
+            <p>
+              An older version on my portfolio website built from the Knight
+              Bootstrap template.
+            </p>
+            <p>
+              <strong>Platforms:</strong>
+              Desktop, Laptop and Mobile
+            </p>
+            <p>
+              <strong>Version:</strong>
+              Released - 1.
+            </p>
+            <div class="project-tags">
+              <span class="tag">Bootstrap</span>
+              <span class="tag">CSS</span>
+              <span class="tag">Email js</span>
+              <span class="tag">HTML</span>
+              <span class="tag">JavaScript</span>
+              <span class="tag">Portfolio</span>
+              <span class="tag">Website</span>
+            </div>
+            <div class="project-buttons">
+              <button class="ui-btn">
+                <span>
+                  <a
+                    href="https://github.com/Passion-Over-Pain/Portfolio-Redesigned"
+                    target="_blank">
+                    Code
+                  </a>
+                </span>
+              </button>
+
+              <button class="ui-btn">
+                <span>
+                  <a
+                    href="https://passion-over-pain.github.io/Portfolio-Redesigned/"
+                    target="_blank">
+                    Site
+                  </a>
+                </span>
+              </button>
+
+              <button class="ui-btn">
+                <span onclick="starRepository(`Portfolio-Redesigned`)">
+                  Like
+                </span>
+              </button>
+            </div>
+          </div>
+          <div class="project-preview">
+            <a
+              href="https://passion-over-pain.github.io/Portfolio-Redesigned/"
+              target="_blank">
+              <img
+                src="Images/Previews/Old-Portfolio.webp"
+                alt="Template Portfolio Preview" />
+            </a>
+          </div>
+        </div>
         <div class="flexBox">
           <button class="actionBtn ui-btn" id="Git" onclick="openProjects()">
             <span>All Projects</span>
+            <ion-icon name="logo-github"></ion-icon>
+          </button>
+          <button class="actionBtn ui-btn" onclick="followUser()">
+            <span>Follow Me</span>
             <ion-icon name="logo-github"></ion-icon>
           </button>
         </div>
@@ -945,48 +1146,85 @@
           <h2 class="section-title subTitle bounce">My Skills</h2>
         </div>
         <div class="skills-container">
-          <div class="skill-card row-1 bounce">
+          <div class="skill-card">
             <img
-              src="Images/Icons/database.svg"
-              alt="This is a computer device"
-              class="skill-icon" />
-            <h3>Database Development</h3>
+              src="Images/Illustrations/bot-development.svg"
+              alt="Chatbot Building"
+              class="illustration" />
+            <h3>Bot Development</h3>
+            <p>
+              Developing intelligent and automated bots for various
+              applications, enhancing efficiency and user experience.
+            </p>
           </div>
-          <div class="skill-card row-2 bounce">
+          <div class="skill-card">
             <img
-              src="Images/Icons/computer.svg"
-              alt="This is a computer device"
-              class="skill-icon" />
-
-            <h3>Desktop Applications Development</h3>
+              src="Images/Illustrations/desktop-development.svg"
+              alt="Desktop Development"
+              class="illustration" />
+            <h3>Desktop Development</h3>
+            <p>
+              Creating cross-platform and native desktop applications designed
+              for efficiency and ease of use.
+            </p>
           </div>
-          <div class="skill-card row-1 bounce">
+          <div class="skill-card">
             <img
-              src="Images/Icons/website.svg"
-              alt="This is a computer device"
-              class="skill-icon" />
-            <h3>Web Applications Development</h3>
+              src="Images/Illustrations/web-development.svg"
+              alt="Web Development"
+              class="illustration" />
+            <h3>Web Development</h3>
+            <p>
+              Creating modern, responsive, and interactive websites and web
+              applications.
+            </p>
           </div>
         </div>
       </section>
+
       <!------------------------------------------------My Socials---------------------------------------------------------------------------------------->
       <section class="Socials" id="SocialsSection">
         <div class="flexBox">
           <h3 class="subTitle bounce section-title">My Socials</h3>
+        </div>
+        <div class="stories-container">
+          <img
+            src="Images/Previews/Professional-cover.webp"
+            alt="Professional Updates"
+            class="story-icon"
+            data-story="professional" />
+          <img
+            src="Images/Previews/Casual-cover.webp"
+            alt="Casual Updates"
+            class="story-icon"
+            data-story="casual" />
+        </div>
+
+        <div class="story-viewer hidden">
+          <div class="story-progress-bar"></div>
+          <div class="story-content"></div>
+          <button class="close-story">×</button>
         </div>
         <div class="social-posts-container">
           <a
             href="https://www.linkedin.com/posts/tinotenda-mhedziso_studentdevelopers-nmustudents-nmucomputersociety-activity-7233195999819649024-cC6M?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEWDhyYB0fsz2ir802fc1jcJgodtwAgEVmE"
             target="_blank">
             <div class="social-post">
+              <img
+                src="Images/Posts/VCclass.webp"
+                alt="Post Preview"
+                class="social-post-image" />
               <div class="social-post-header">
                 <img
                   src="Images/Me.webp"
                   alt="Profile Picture"
                   class="social-profile-pic" />
-                <h2>Version Control Class</h2>
+                <div class="social-post-info">
+                  <h2>Version Control</h2>
+                  <p class="social-post-meta">LinkedIn • 2 min read</p>
+                </div>
                 <img
-                  src="Images/Icons/linkedin.svg"
+                  src="Images/Icons/linkedin-dark.svg"
                   alt="LinkedIn Icon"
                   class="social-platform-icon" />
               </div>
@@ -995,37 +1233,36 @@
                 open-source projects through Git and GitHub😌. Something that
                 seems daunting at first but...
               </p>
-              <img
-                src="Images/Posts/VCclass.webp"
-                alt="Post Preview"
-                class="social-post-image" />
             </div>
           </a>
+
           <a
             href="https://dev.to/passionoverpain/debugging-adventure-day-1-what-to-do-when-your-code-doesnt-work-2ji2"
             target="_blank">
             <div class="social-post">
+              <img
+                src="Images/Posts/Debugging Adventure.webp"
+                alt="Post Preview"
+                class="social-post-image" />
               <div class="social-post-header">
                 <img
                   src="Images/Me.webp"
                   alt="Profile Picture"
                   class="social-profile-pic" />
-                <h2>Debugging Adventure</h2>
-
+                <div class="social-post-info">
+                  <h2>Debugging Adventure</h2>
+                  <p class="social-post-meta">Dev.to • 3 min read</p>
+                </div>
                 <img
-                  src="Images/Icons/dev.svg"
+                  src="Images/Icons/dev-dark.svg"
                   alt="Dev.to Icon"
                   class="social-platform-icon" />
               </div>
               <p class="social-post-preview">
-                During your coding quest, you encounter a formidable enemy—an
+                During your coding quest, you encounter a formidable enemy — an
                 unexpected bug in your project that brings everything to a
                 halt...
               </p>
-              <img
-                src="Images/Posts/Debugging Adventure.webp"
-                alt="Post Preview"
-                class="social-post-image" />
             </div>
           </a>
 
@@ -1033,14 +1270,21 @@
             href="https://dev.to/passionoverpain/unlocking-the-secret-gem-inside-a-centered-div-4d9j"
             target="_blank">
             <div class="social-post">
+              <img
+                src="Images/Posts/CSS Styling.webp"
+                alt="Post Preview"
+                class="social-post-image" />
               <div class="social-post-header">
                 <img
                   src="Images/Me.webp"
                   alt="Profile Picture"
                   class="social-profile-pic" />
-                <h2>CSS Styles</h2>
+                <div class="social-post-info">
+                  <h2>CSS Styles</h2>
+                  <p class="social-post-meta">Dev.to • 4 min read</p>
+                </div>
                 <img
-                  src="Images/Icons/dev.svg"
+                  src="Images/Icons/dev-dark.svg"
                   alt="Dev.to Icon"
                   class="social-platform-icon" />
               </div>
@@ -1049,10 +1293,6 @@
                 you’ve probably realized how frustrating CSS can be when you
                 don’t fully understand...
               </p>
-              <img
-                src="Images/Posts/CSS Styling.webp"
-                alt="Post Preview"
-                class="social-post-image" />
             </div>
           </a>
         </div>
@@ -1102,7 +1342,7 @@
           <div class="footer-column">
             <h4>Highlighted Skills</h4>
             <ul>
-              <li>Database Development</li>
+              <li>Bot Development</li>
               <li>Desktop Applications Development</li>
               <li>Web Applications Development</li>
             </ul>
@@ -1141,6 +1381,14 @@
                     alt="Project Management App Icon" />
                 </a>
                 <p class="project-name">Task App</p>
+              </li>
+              <li>
+                <a href="#TemplatePortfolio">
+                  <img
+                    src="Images/Icons/portfolio.svg"
+                    alt="Template Portfolio Icon" />
+                </a>
+                <p class="project-name">Old Portfolio</p>
               </li>
             </ul>
           </div>
@@ -1239,6 +1487,10 @@
       </div>
     </footer>
 
+    <script type="text/javascript" src="p5.min.js"></script>
+
+    <script type="text/javascript" src="p5.sound.min.js"></script>
+
     <script
       type="module"
       src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
@@ -1257,11 +1509,5 @@
       integrity="sha512-wC/cunGGDjXSl9OHUH0RuqSyW4YNLlsPwhcLxwWW1CR4OeC2E1xpcdZz2DeQkEmums41laI+eGMw95IJ15SS3g=="
       crossorigin="anonymous"
       referrerpolicy="no-referrer"></script>
-    <script>
-      VanillaTilt.init(document.querySelector('.profile-box'), {
-        max: 15,
-        speed: 400
-      });
-    </script>
   </body>
 </html>

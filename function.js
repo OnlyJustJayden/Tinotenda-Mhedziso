@@ -5,9 +5,12 @@ let menu = document.querySelector('.menu');
 let shown = false;
 menuToggle.onclick = function () {
   menu.classList.toggle('active');
+  if (!menu.classList.contains('active')) {
+    menu.classList.remove('tooltips-visible');
+  }
 };
-var viewpoints = document.getElementsByClassName('Viewpoint');
-var views = document.getElementsByClassName('View');
+let viewpoints = document.getElementsByClassName('Viewpoint');
+let views = document.getElementsByClassName('View');
 function show(viewObj) {
   for (viewpoint of viewpoints) {
     viewpoint.classList.remove('Activepoint');
@@ -19,6 +22,7 @@ function show(viewObj) {
   document.getElementById(viewObj).classList.add('Activeview');
 }
 let anime = true;
+let sentFirst = false;
 const abutton = document.getElementById('Anime');
 abutton.addEventListener('click', animate);
 let Icons = document.querySelectorAll('.Icon');
@@ -37,9 +41,6 @@ function animate() {
   updateQuestStatus('AnimationsTask', true);
   checkQuests();
   if (anime) {
-    for (i = 0; i < Icons.length; ++i) {
-      Icons[i].classList.remove('animate');
-    }
     for (s = 0; s < skillCards.length; ++s) {
       skillCards[s].classList.remove('bounce');
     }
@@ -50,9 +51,6 @@ function animate() {
     window.location.assign(`#FooterSection`);
     setTimeout(backHome, 2000);
   } else {
-    for (i = 0; i < Icons.length; ++i) {
-      Icons[i].classList.add('animate');
-    }
     for (s = 0; s < skillCards.length; ++s) {
       skillCards[s].classList.add('bounce');
     }
@@ -90,47 +88,52 @@ function showNotification(text, number) {
     });
   }
 }
-//This is an Intersection Observer ... Duh🤣, in plain english, a method (function) of checking if each section is currently visisble
-// on the user's screen, if not the item is hidden, if so then it loads in//
-let observer = new IntersectionObserver((entries) => {
-  entries.forEach((entry) => {
-    if (anime) {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('show');
-
-        // Check if the element has the class 'Projects'
-        // if (entry.target.classList.contains('Projects')) {
-        //   notyf.success('Found you :)');
-        //   playCode();
-        // }
-      } else {
-        entry.target.classList.remove('show');
-      }
-    } else {
-      entry.target.classList.add('show');
-    }
-  });
-});
-
-let hiddenElements = document.querySelectorAll('.Projects, .AboutMe, .Skills');
-hiddenElements.forEach((el) => observer.observe(el));
-
 let loader = document.getElementById('preloader');
 window.addEventListener('load', function (load) {
   // Lazy Loading :) //
   this.window.removeEventListener('load', load, false);
-  if (window.location.hash === '#tos') {
-    showToS();
+  switch (window.location.hash) {
+    case '#tos':
+      showToS();
+      break;
+    case '#follow':
+      showNotification(`Thanks for following...`, 4);
+      followedGitHub();
+      break;
+    case '#star':
+      showNotification(`Thanks for starring...`, 5);
+      break;
   }
+  history.replaceState(
+    null,
+    null,
+    window.location.pathname + window.location.search
+  );
+
   this.setTimeout(function () {
     loader.style.display = 'none';
     unlockScreen();
-    showNotification('Welcome esteemed guest...', 1);
+    let greet = localStorage.getItem('greeted');
+    if (!greet) {
+      showNotification(`Hey ! I'm Passion...`, 1);
+      document
+        .getElementById('cardClose')
+        .addEventListener('click', greetedUser);
+    }
+
     shownWelcome = true;
-    sendMessageToBot('isWebsite');
     loadQuestStatus();
-  }, 1000);
+  }, 500);
 });
+
+function greetedUser() {
+  localStorage.setItem('greeted', true);
+}
+function followedGitHub() {
+  document.getElementById('GitHubTask').checked = true;
+  updateQuestStatus('GitHubTask', true);
+  checkQuests();
+}
 
 function downloadCV() {
   downloadFile('Documents/TinotendaMhedzisoCV.pdf', 'TinotendaMhedzisoCV.pdf');
@@ -147,10 +150,7 @@ function downloadFile(fileUrl, fileName) {
   document.body.removeChild(link);
 }
 function openGitHub() {
-  document.getElementById('GitHubTask').checked = true;
   navigateToSite('https://github.com/Passion-Over-Pain');
-  updateQuestStatus('GitHubTask', true);
-  checkQuests();
 }
 
 function openEmail() {
@@ -163,9 +163,7 @@ function openLinkedIn() {
   navigateToSite('https://www.linkedin.com/in/tinotenda-mhedziso/');
 }
 function openProjects() {
-  document.getElementById('GitHubTask').checked = true;
   navigateToSite(`https://github.com/Passion-Over-Pain?tab=repositories`);
-  checkQuests();
 }
 function navigateToSite(fileUrl) {
   const link = document.createElement('a');
@@ -212,7 +210,6 @@ function loadQuestStatus() {
   document.getElementById('GitHubTask').checked =
     questsStatus.GitHubTask || false;
 
-  // Enable the checkboxes once the status is loaded
   document.querySelectorAll('#checklist input').forEach((checkbox) => {
     checkbox.disabled = false; // Enable checkboxes after loading status
   });
@@ -232,7 +229,7 @@ function checkQuests() {
     }
   });
   if (complete && !shown) {
-    showPopUp(3); // Assuming this function shows a pop-up when all quests are completed
+    showPopUp(3);
     shown = true;
   }
 }
@@ -245,7 +242,7 @@ function showPopUp(message) {
     case 1:
       {
         cardTitle.textContent = 'Site Navigation';
-        cardDescription.textContent = ` Hey! I'm Passion, Tino's personalized AI chatbot. Welcome to our portfolio website. Here are some helpful tips while navigating the site. If know you're ready, feel free to skip this guide.`;
+        cardDescription.textContent = ` Hey! I'm Passion, Tino's personalized AI chatbot. Welcome to our portfolio website. Here are some helpful tips while navigating the site. If you know you're ready, feel free to skip this guide.`;
         document.getElementById('cardTable').style.display = 'grid';
         cardImage.src = 'Images/Icons/her.svg';
       }
@@ -257,7 +254,28 @@ function showPopUp(message) {
         cardImage.src = 'Images/Icons/speak.svg';
       }
       break;
-    case 2:
+    case 3:
+      {
+        cardTitle.textContent = 'Portfolio Projects';
+        cardDescription.textContent = `By clicking the <Code> button, you’ll be directed to the GitHub repository, where you can explore a detailed case study covering the project’s objectives, challenges, and key insights. The <Site> button lets you experience the project firsthand, but if it’s unavailable, simply download it to run locally. While some projects are hidden for now, Tino is eagerly preparing to release them soon — consider this a sneak peek of what's to come!`;
+        cardImage.src = 'Images/Icons/website.svg';
+      }
+      break;
+    case 4:
+      {
+        cardTitle.textContent = 'GitHub Follow';
+        cardDescription.textContent = `Thanks for following! Stay tuned for exciting updates and new features coming your way.`;
+        cardImage.src = 'Images/Icons/follow.svg';
+      }
+      break;
+    case 5:
+      {
+        cardTitle.textContent = 'GitHub Star';
+        cardDescription.textContent = `You're an absolute star! ⭐Get it? because you starred a repo?... listen: blame Tino — he forgot to delete his bad jokes from my database. Anyway, thanks for the support😊! .`;
+        cardImage.src = 'Images/Icons/star.svg';
+      }
+      break;
+    case 7:
       {
         cardTitle.textContent = 'Quests Complete !';
         cardDescription.textContent = `Yayyy, You completed all the quests and for that I now promote you from internet guest to a friend of ours.`;
@@ -319,19 +337,16 @@ function startCountingTime() {
 
 function stopCountingTime() {
   clearInterval(intervalId);
+  timeElapsed = 0;
 }
 
-// Botpress Logic
-// Toggle the webchat visibility
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>/ Botpress Logic<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 let musicPlayer = document.getElementById('myMusic');
 
-function playMusic() {
-  musicPlayer.play();
-  notyf.success('Music has been enabled.');
-}
 window.addEventListener('message', (event) => {
   if (event.data.action === 'playMusic') {
+    showMusicCard();
     playMusic();
   } else if (event.data.action === 'checkPassion') {
     document.getElementById('TalktoPassionTask').checked = true;
@@ -355,6 +370,10 @@ function contactMe() {
   sendMessageToBot('contactMe');
 }
 function openWebchat() {
+  if (!sentFirst) {
+    sentFirst = true;
+    sendMessageToBot('isWebsite');
+  }
   document.querySelector('.webchat').style.display = 'block';
   document.querySelector('.webchat-toggle').style.display = 'none';
   sendMessageToBot('openWebchat');
@@ -371,6 +390,7 @@ function unlockScreen() {
 const notyf = new Notyf({
   duration: 5000,
   dismissible: true,
+  ripple: false,
   position: {
     x: 'right',
     y: 'top'
@@ -378,20 +398,21 @@ const notyf = new Notyf({
   types: [
     {
       type: 'success',
-      background: '#28a745',
+      background: '#1a8917',
       icon: {
         className: 'fas fa-check-circle',
         tagName: 'i',
-        color: 'white'
+        color: '#0f0'
       }
     },
     {
       type: 'error',
-      background: '#db1a00',
+      background: '#e60000',
+      className: 'custom-error-notyf',
       icon: {
-        className: 'fas fa-times-circle',
+        className: 'fas fa-exclamation-circle',
         tagName: 'i',
-        color: 'white'
+        color: '#ff4c4c'
       }
     },
     {
@@ -406,21 +427,21 @@ const notyf = new Notyf({
   ]
 });
 
-// GSAP animation for programming languages (fade in from the bottom)
+// GSAP animations
 let programmingLanguages = document.querySelectorAll('.Programming .language');
 
 gsap.utils.toArray(programmingLanguages).forEach((item, index) => {
   gsap.from(item, {
-    opacity: 0, // Start invisible
-    y: 50, // Start 50px below the original position
-    duration: 1, // Animation duration
-    delay: index * 0.3, // Stagger delay for each item
-    ease: 'power2.out', // Ease effect for smoothness
+    opacity: 0,
+    y: 50,
+    duration: 1,
+    delay: index * 0.3,
+    ease: 'power2.out',
     scrollTrigger: {
-      trigger: item, // Trigger the animation for each programming language item
-      start: 'top 95%', // Start animation when the top of the item reaches 95% of the viewport height
-      toggleActions: 'play none none none', // Play when in view, reverse when out of view
-      once: true // Animation triggers only once
+      trigger: item,
+      start: 'top 95%',
+      toggleActions: 'play none none none',
+      once: true
     }
   });
 });
@@ -430,33 +451,33 @@ let projectItems = document.querySelectorAll('.project-item');
 gsap.utils.toArray(projectItems).forEach((item) => {
   gsap.from(item, {
     opacity: 0,
-    y: 50, // Start 50px lower
-    duration: 1, // Animation duration
-    stagger: 0.5, // Delay between each item's animation
-    ease: 'power2.out', // Smooth ease
+    y: 50,
+    duration: 1,
+    stagger: 0.5,
+    ease: 'power2.out',
     scrollTrigger: {
-      trigger: item, // The element itself
-      start: 'top 80%', // Trigger when the top of the item is 80% from the top of the viewport
+      trigger: item,
+      start: 'top 80%',
       toggleActions: 'play none none none',
-      once: true // Only trigger the animation once
+      once: true
     }
   });
 });
 
-let socialPosts = document.querySelectorAll('.social-post');
+let postLikeCards = document.querySelectorAll('.social-post,.skill-card');
 
-gsap.utils.toArray(socialPosts).forEach((post, index) => {
+gsap.utils.toArray(postLikeCards).forEach((post, index) => {
   gsap.from(post, {
-    opacity: 0, // Start invisible
-    y: 50, // Start 50px lower
-    duration: 1, // Animation duration
-    delay: index * 0.3, // Stagger delay for each post
-    ease: 'power2.out', // Ease effect for smoothness
+    opacity: 0,
+    y: 50,
+    duration: 1,
+    delay: index * 0.3,
+    ease: 'power2.out',
     scrollTrigger: {
-      trigger: post, // Trigger the animation for each social post
-      start: 'top 80%', // Start animation when the top of the post reaches 80% of the viewport height
-      toggleActions: 'play none none none', // Play when in view, reverse when out of view
-      once: true // Animation triggers only once
+      trigger: post,
+      start: 'top 80%',
+      toggleActions: 'play none none none',
+      once: true
     }
   });
 });
@@ -465,16 +486,596 @@ let socialIcons = document.querySelectorAll('.social-Icon');
 
 gsap.utils.toArray(socialIcons).forEach((icon, index) => {
   gsap.from(icon, {
-    opacity: 0, // Start invisible
-    x: -50, // Start 50px to the left
-    duration: 1, // Animation duration
-    delay: index * 0.3, // Stagger delay for each icon
-    ease: 'power2.out', // Ease effect for smoothness
+    opacity: 0,
+    x: -50,
+    duration: 1,
+    delay: index * 0.3,
+    ease: 'power2.out',
     scrollTrigger: {
-      trigger: icon, // Trigger the animation for each social icon
-      start: 'top 80%', // Start animation when the top of the icon reaches 80% of the viewport height
-      toggleActions: 'play none none none', // Play when in view, reverse when out of view
-      once: true // Animation triggers only once
+      trigger: icon,
+      start: 'top 80%',
+      toggleActions: 'play none none none',
+      once: true
     }
   });
 });
+
+document.getElementById('tooltipToggle').addEventListener('click', function () {
+  document.querySelector('.menu').classList.toggle('tooltips-visible');
+});
+
+function authenticateGitHub(intent, repoName = null) {
+  //Intents specify the action the user wants to undertake
+  const repoOwner = 'Passion-Over-Pain';
+  const backendUrl =
+    'https://portfolio-backend-pi-three.vercel.app/api/auth/login';
+
+  let url = `${backendUrl}?intent=${encodeURIComponent(intent)}`;
+
+  if (repoName) {
+    url += `&repoOwner=${encodeURIComponent(
+      repoOwner
+    )}&repoName=${encodeURIComponent(repoName)}`;
+  }
+
+  window.location.href = url;
+}
+
+// Call this for starring
+function starRepository(repoName) {
+  authenticateGitHub('star', repoName);
+}
+
+// Call this for following
+function followUser() {
+  authenticateGitHub('follow');
+}
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Music Vis <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+let fft;
+let song;
+let particles = [];
+let amp = 0;
+let playing = false;
+
+function preload() {
+  song = loadSound(`Audio/Music/Shogun's Shadow Trap.mp3`);
+}
+
+function setup() {
+  let cnv = createCanvas(windowWidth, windowHeight);
+  cnv.position(0, 0);
+  cnv.style('position', 'fixed');
+  cnv.style('top', '0');
+  cnv.style('left', '0');
+  cnv.style('z-index', '100'); // Above everything that I created but under the music-card
+  cnv.style('display', 'none');
+
+  angleMode(DEGREES);
+  rectMode(CENTER);
+
+  // Initialize FFT
+  fft = new p5.FFT();
+  fft.setInput(song);
+}
+
+function draw() {
+  background(10, 10, 10, 100);
+
+  stroke('#0f0');
+  strokeWeight(1.5);
+  noFill();
+
+  translate(width / 2, height / 2);
+
+  fft.analyze();
+  amp = fft.getEnergy(20, 100);
+  let wave = fft.waveform();
+
+  for (let t = -1; t <= 1; t += 2) {
+    beginShape();
+    for (let i = 0; i < width; i++) {
+      let index = floor(map(i, 0, width, 0, wave.length - 1));
+
+      let r = map(wave[index], -1, 1, 150, 350);
+      //       let scaleFactor = min(width, height) / 800; // Adjust 800 based on your preference
+      // let r = map(wave[index], -1, 1, 100 * scaleFactor, 250 * scaleFactor);
+
+      let x = r * sin(i) * t;
+      let y = r * cos(i);
+      vertex(x, y);
+    }
+    endShape();
+  }
+
+  let p = new Particle();
+  particles.push(p);
+  for (let i = particles.length - 1; i >= 0; --i) {
+    if (!particles[i].edges()) {
+      particles[i].update(amp > 230);
+      particles[i].show();
+    } else {
+      particles.splice(i, 1);
+    }
+  }
+}
+
+class Particle {
+  constructor() {
+    this.pos = p5.Vector.random2D().mult(250);
+    this.vel = createVector(0, 0);
+    this.acc = this.pos.copy().mult(random(0.0003));
+    this.w = random(3, 5);
+  }
+
+  update(cond) {
+    this.vel.add(this.acc);
+    this.pos.add(this.vel);
+
+    if (cond) {
+      this.pos.add(this.vel);
+      this.pos.add(this.vel);
+      this.pos.add(this.vel);
+    }
+  }
+
+  edges() {
+    return (
+      this.pos.x < -width / 2 ||
+      this.pos.x > width / 2 ||
+      this.pos.y < -height / 2 ||
+      this.pos.y > height / 2
+    );
+  }
+
+  show() {
+    noStroke();
+    fill('#0f0');
+    ellipse(this.pos.x, this.pos.y, this.w);
+  }
+}
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Music Functionality <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+let songs = [];
+let currentSongIndex = 0;
+let audioPlayer = document.getElementById('myMusic');
+const titleElement = document.querySelector('.title-1');
+const artistElement = document.querySelector('.title-2');
+const elapsedTimeElement = document.querySelector('.music-time_now');
+const fullTimeElement = document.querySelector('.music-time_full');
+const musicProgressBar = document.querySelector('.music-elapsed');
+const volumeSlider = document.querySelector('.music-volume .slider .green');
+const playButton = document.querySelector(
+  ".music-controls img[src*='play.svg']"
+);
+const nextButton = document.querySelector(
+  ".music-controls img[src*='next.svg']"
+);
+const prevButton = document.querySelector(
+  ".music-controls img[src*='previous.svg']"
+);
+const closeButton = document.querySelector(
+  ".music-controls img[src*='close.svg']"
+);
+const volumeButton = document.querySelector('.music-volume_button');
+
+let isMuted = false;
+
+// Toggle mute/unmute
+volumeButton.addEventListener('click', () => {
+  isMuted = !isMuted;
+  song.setVolume(isMuted ? 0 : 1);
+  volumeButton.src = isMuted
+    ? 'Images/Icons/mute.svg'
+    : 'Images/Icons/volume.svg';
+});
+
+// Load Songs from JSON
+async function loadSongs() {
+  try {
+    const response = await fetch('songs.json');
+    songs = await response.json();
+    loadSong(0);
+  } catch (error) {
+    console.error('Error loading songs:', error);
+  }
+}
+
+// Load a New Song (switching)
+function loadSong(index) {
+  if (index < 0 || index >= songs.length) return;
+  currentSongIndex = index;
+  const localsong = songs[currentSongIndex];
+
+  audioPlayer.src = localsong.src;
+  titleElement.textContent = localsong.title;
+  artistElement.textContent = localsong.artist;
+
+  musicProgressBar.style.width = '0%';
+  elapsedTimeElement.textContent = '0:00';
+
+  if (song) {
+    song.stop(); // Stop current song if playing
+  }
+
+  song = loadSound(localsong.src, () => {
+    fullTimeElement.textContent = formatTime(song.duration());
+  });
+
+  playing = false;
+  playButton.src = 'Images/Icons/play.svg';
+}
+
+// Toggle Music Animation
+function toggleMusicAnimation(pause) {
+  document.querySelectorAll('.music-greenline').forEach((el) => {
+    el.style.animationPlayState = pause ? 'paused' : 'running';
+  });
+}
+
+// Toggle Play/Pause
+function togglePlay() {
+  if (!playing) {
+    playMusic();
+  } else {
+    pauseMusic();
+  }
+}
+
+// Play Song
+function playMusic() {
+  if (song && !song.isPlaying()) {
+    song.play();
+    playing = true;
+    playButton.src = 'Images/Icons/pause.svg';
+    toggleMusicAnimation(false);
+  }
+}
+
+// Pause Song
+function pauseMusic() {
+  if (song && song.isPlaying()) {
+    song.pause();
+    playing = false;
+    playButton.src = 'Images/Icons/play.svg';
+    toggleMusicAnimation(true);
+  }
+}
+
+// Next Song
+function nextSong() {
+  currentSongIndex = (currentSongIndex + 1) % songs.length;
+  loadSong(currentSongIndex);
+  playMusic();
+}
+
+// Previous Song
+function prevSong() {
+  currentSongIndex = (currentSongIndex - 1 + songs.length) % songs.length;
+  loadSong(currentSongIndex);
+  playMusic();
+}
+
+// Progress Bar Updates
+function updateMusicProgressBar() {
+  if (song && song.isPlaying()) {
+    const currentTime = song.currentTime();
+    const duration = song.duration();
+
+    elapsedTimeElement.textContent = formatTime(currentTime);
+
+    if (duration) {
+      const progressPercent = (currentTime / duration) * 100;
+      musicProgressBar.style.width = `${progressPercent}%`;
+    }
+  }
+}
+
+// Click to Seek Song Position
+document.querySelector('.music-time').addEventListener('click', (event) => {
+  if (!song) return;
+
+  const musicProgressBarWidth = event.currentTarget.offsetWidth;
+  const clickX = event.offsetX;
+  const duration = song.duration();
+
+  if (duration) {
+    song.jump((clickX / musicProgressBarWidth) * duration);
+  }
+});
+
+function formatTime(seconds) {
+  const minutes = Math.floor(seconds / 60);
+  const secs = Math.floor(seconds % 60);
+  return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
+}
+
+function hideMusicCard() {
+  gsap.to('#musicCard', {
+    duration: 0.5,
+    opacity: 0,
+    scale: 0.9,
+    ease: 'power2.in',
+    onComplete: () => {
+      document.getElementById('musicCard').style.display = 'none'; // Hide music card after animation
+    }
+  });
+
+  gsap.to('#musicToggle', {
+    duration: 0.5,
+    opacity: 1,
+    scale: 1,
+    ease: 'power2.out',
+    onStart: () => {
+      document.getElementById('musicToggle').style.display = 'block'; // Show toggle before animation
+    }
+  });
+}
+
+playButton.addEventListener('click', togglePlay);
+nextButton.addEventListener('click', nextSong);
+prevButton.addEventListener('click', prevSong);
+
+setInterval(updateMusicProgressBar, 1000);
+
+// Load First Song
+loadSongs();
+function toggleVisualizer() {
+  let cnv = document.querySelector('canvas'); // Get the canvas element
+  if (cnv.style.display === 'none') {
+    cnv.style.display = 'block';
+    lockScreen();
+  } else {
+    cnv.style.display = 'none';
+    unlockScreen();
+  }
+}
+
+function showMusicCard() {
+  gsap.to('#musicCard', {
+    duration: 0.5,
+    opacity: 1,
+    scale: 1,
+    display: 'block',
+    ease: 'power2.out'
+  });
+
+  gsap.to('#musicToggle', {
+    duration: 0.5,
+    opacity: 0,
+    scale: 0.5,
+    ease: 'power2.out',
+    onComplete: () => {
+      document.getElementById('musicToggle').style.display = 'none';
+    }
+  });
+}
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Story Functionality<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+//USE THIS:
+const stories = {
+  professional: [
+    {
+      type: 'text',
+      content: 'Professional Statuses will appear here😄',
+      duration: 5000,
+      background: '#001908'
+    },
+    // {
+    //   type: 'text',
+    //   content: 'My Portfolio Trailer 👉🏿',
+    //   duration: 5000,
+    //   background: '#001908'
+    // },
+
+    { type: 'video', src: 'Images/Portfolio-Trailer.mp4', duration: 55000 } // Video duration auto-handled
+  ],
+  casual: [
+    {
+      type: 'text',
+      content: 'Personal Statuses will appear here😎',
+      duration: 5000,
+      background: '#001908'
+    }
+  ]
+};
+
+const storyIcons = document.querySelectorAll('.story-icon');
+const storyViewer = document.querySelector('.story-viewer');
+const storyProgressBar = document.querySelector('.story-progress-bar');
+const storyContent = document.querySelector('.story-content');
+const closeStoryBtn = document.querySelector('.close-story');
+
+let storyQueue = [];
+let storyIndex = 0;
+let isPaused = false;
+let currentVideo = null;
+let currentProgress = 0;
+let progressStartTime = 0;
+let progressDuration = 0;
+let animationFrameId = null;
+let videoLoaded = false;
+
+// Start a story when an icon is clicked
+storyIcons.forEach((icon) => {
+  icon.addEventListener('click', (e) => {
+    const storyType = e.target.dataset.story;
+    storyQueue = stories[storyType];
+    storyIndex = 0;
+    showStory();
+  });
+});
+
+// Close the story when the close button is clicked
+closeStoryBtn.addEventListener('click', hideStory);
+
+// Pause/resume on mouse or touch events
+storyViewer.addEventListener('mousedown', pauseStory);
+storyViewer.addEventListener('mouseup', resumeStory);
+storyViewer.addEventListener('touchstart', pauseStory);
+storyViewer.addEventListener('touchend', resumeStory);
+
+function hideStory() {
+  unlockScreen();
+  storyViewer.classList.add('hidden');
+  stopAllMedia();
+}
+
+function showStory() {
+  currentProgress = 0;
+  progressDuration = 0;
+  isPaused = false;
+  cancelAnimationFrame(animationFrameId);
+
+  if (storyIndex >= storyQueue.length) {
+    unlockScreen();
+    storyViewer.classList.add('hidden');
+    stopAllMedia();
+    return;
+  }
+
+  lockScreen();
+  storyViewer.classList.remove('hidden');
+  storyContent.innerHTML = '';
+
+  const currentStory = storyQueue[storyIndex];
+
+  if (currentStory.type === 'image') {
+    const img = document.createElement('img');
+    img.src = currentStory.src;
+    img.style.width = '100vw';
+    img.style.height = '100vh';
+    img.style.objectFit = 'cover';
+    storyContent.appendChild(img);
+    progressDuration = currentStory.duration;
+    startStoryProgressBar();
+  } else if (currentStory.type === 'video') {
+    const video = document.createElement('video');
+    video.className = 'video-js vjs-default-skin';
+    video.src = currentStory.src;
+    video.autoplay = true;
+    video.controls = false;
+    video.style.width = '100vw';
+    video.style.height = '100vh';
+    video.style.objectFit = 'cover';
+    const loadingText = document.createElement('p');
+    loadingText.innerText = 'Loading video...';
+    loadingText.classList.add('loading-message');
+    loadingText.style.position = 'absolute';
+    loadingText.style.top = '50%';
+    loadingText.style.left = '50%';
+    loadingText.style.transform = 'translate(-50%, -50%)';
+    loadingText.style.fontSize = '20px';
+    loadingText.style.color = 'white';
+    storyContent.appendChild(loadingText);
+
+    currentVideo = video;
+    storyContent.appendChild(video);
+
+    progressDuration = currentStory.duration;
+
+    // Handle when the video is ready to play
+    video.addEventListener(
+      'canplay',
+      () => {
+        // Remove loading message once the video is ready
+        loadingText.remove();
+
+        // Start progress bar
+        startStoryProgressBar();
+      },
+      { once: true }
+    );
+
+    video.addEventListener('ended', nextStory, { once: true });
+  } else if (currentStory.type === 'text') {
+    const textElement = document.createElement('p');
+    textElement.innerText = currentStory.content;
+    textElement.style.fontSize = '24px';
+    textElement.style.color = 'white';
+    textElement.style.display = 'flex';
+    textElement.style.justifyContent = 'center';
+    textElement.style.alignItems = 'center';
+    textElement.style.width = '100vw';
+    textElement.style.height = '100vh';
+    textElement.style.textAlign = 'center';
+    textElement.style.backgroundColor = currentStory.background;
+    storyContent.appendChild(textElement);
+    progressDuration = currentStory.duration;
+    startStoryProgressBar();
+  }
+}
+
+function showLoadingMessage() {
+  const loadingText = document.createElement('p');
+  loadingText.innerText = 'Loading...';
+  loadingText.classList.add('loading-message');
+  loadingText.style.position = 'absolute';
+  loadingText.style.top = '50%';
+  loadingText.style.left = '50%';
+  loadingText.style.transform = 'translate(-50%, -50%)';
+  loadingText.style.fontSize = '20px';
+  loadingText.style.color = 'white';
+  storyContent.appendChild(loadingText);
+}
+
+function removeLoadingMessage() {
+  const loadingText = document.querySelector('.loading-message');
+  if (loadingText) {
+    loadingText.remove();
+  }
+}
+
+function startStoryProgressBar() {
+  // Initialize the progress start time, accounting for any previous progress (e.g., resume)
+  progressStartTime = Date.now() - currentProgress;
+  animationFrameId = requestAnimationFrame(updateStoryProgressBar);
+}
+
+function updateStoryProgressBar() {
+  if (isPaused) return; // If paused, exit and wait for resume
+
+  const elapsedTime = Date.now() - progressStartTime;
+  currentProgress = Math.min(elapsedTime, progressDuration);
+  storyProgressBar.style.width = `${
+    (currentProgress / progressDuration) * 100
+  }%`;
+
+  if (currentProgress < progressDuration) {
+    animationFrameId = requestAnimationFrame(updateStoryProgressBar);
+  } else {
+    nextStory();
+  }
+}
+
+function nextStory() {
+  cancelAnimationFrame(animationFrameId);
+  currentProgress = 0;
+  storyIndex++;
+  showStory();
+}
+
+function pauseStory() {
+  isPaused = true;
+  if (currentVideo) currentVideo.pause();
+  cancelAnimationFrame(animationFrameId);
+}
+
+function resumeStory() {
+  if (!isPaused) return;
+  isPaused = false;
+  if (currentVideo) currentVideo.play();
+  // Adjust the start time so the progress resumes correctly
+  progressStartTime = Date.now() - currentProgress;
+  animationFrameId = requestAnimationFrame(updateStoryProgressBar);
+}
+
+function stopAllMedia() {
+  if (currentVideo) {
+    currentVideo.pause();
+    currentVideo.currentTime = 0;
+    currentVideo = null;
+  }
+  cancelAnimationFrame(animationFrameId);
+  currentProgress = 0;
+}
